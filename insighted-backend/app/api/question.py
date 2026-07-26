@@ -1,0 +1,50 @@
+from fastapi import (
+    APIRouter,
+    Depends,
+    HTTPException
+)
+
+from sqlalchemy.orm import Session
+
+from app.database.session import get_db
+
+from app.schemas.question_schema import (
+    QuestionCreate,
+    QuestionResponse
+)
+
+from app.services.question_service import (
+    create_question
+)
+
+router = APIRouter(
+    prefix="/questions",
+    tags=["Questions"]
+)
+
+
+@router.post(
+    "/",
+    response_model=QuestionResponse
+)
+def create_question_endpoint(
+    request: QuestionCreate,
+    db: Session = Depends(get_db)
+):
+
+    try:
+        question = create_question(
+            db=db,
+            assessment_id=request.assessment_id,
+            question_text=request.question_text,
+            question_type=request.question_type,
+            marks=request.marks
+        )
+
+        return question
+
+    except ValueError as e:
+        raise HTTPException(
+            status_code=400,
+            detail=str(e)
+        )
