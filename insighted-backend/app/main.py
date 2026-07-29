@@ -30,6 +30,7 @@ from app.api.question import (
 from app.api.submission import (
     router as submission_router
 )
+from app.api import submission_answer
 
 
 app = FastAPI(title="InsightED API")
@@ -44,6 +45,7 @@ app.include_router(assessment_router)
 app.include_router(classroom_router)
 app.include_router(question_router)
 app.include_router(submission_router)
+app.include_router(submission_answer.router)
 
 @app.get("/")
 def root():

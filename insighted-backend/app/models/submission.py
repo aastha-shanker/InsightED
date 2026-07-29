@@ -58,3 +58,8 @@ class Submission(Base):
         "Student",
         back_populates="submissions"
     )
+    
+    answers = relationship(
+    "SubmissionAnswer",
+    back_populates="submission"
+    )
