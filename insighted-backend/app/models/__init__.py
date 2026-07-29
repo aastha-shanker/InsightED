@@ -6,3 +6,4 @@ from app.models.assessment import Assessment
 from app.models.classroom import Classroom
 from app.models.classroom_student import ClassroomStudent
 from app.models.question import Question
+from app.models.submission import Submission

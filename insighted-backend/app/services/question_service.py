@@ -9,7 +9,12 @@ def create_question(
     assessment_id: int,
     question_text: str,
     question_type: str,
-    marks: int
+    marks: int,
+    option_a: str | None = None,
+    option_b: str | None = None,
+    option_c: str | None = None,
+    option_d: str | None = None,
+    correct_answer: str | None = None
 ):
 
     assessment = (
@@ -26,10 +31,15 @@ def create_question(
         )
 
     question = Question(
-        assessment_id=assessment_id,
-        question_text=question_text,
-        question_type=question_type,
-        marks=marks
+    assessment_id=assessment_id,
+    question_text=question_text,
+    question_type=question_type,
+    marks=marks,
+    option_a=option_a,
+    option_b=option_b,
+    option_c=option_c,
+    option_d=option_d,
+    correct_answer=correct_answer
     )
 
     db.add(question)

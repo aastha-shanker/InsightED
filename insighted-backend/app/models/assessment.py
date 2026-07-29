@@ -66,5 +66,10 @@ class Assessment(Base):
     "Question",
     back_populates="assessment"
     )
+    
+    submissions = relationship(
+    "Submission",
+    back_populates="assessment"
+    )
    
     

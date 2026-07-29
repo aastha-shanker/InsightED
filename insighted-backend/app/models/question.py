@@ -41,6 +41,31 @@ class Question(Base):
         Integer,
         nullable=False
     )
+    
+    option_a = Column(
+    String,
+    nullable=True
+    )
+
+    option_b = Column(
+    String,
+    nullable=True
+    )
+
+    option_c = Column(
+    String,
+    nullable=True
+    )
+
+    option_d = Column(
+    String,
+    nullable=True
+    )
+
+    correct_answer = Column(
+    String,
+    nullable=True
+    )
 
     created_at = Column(
         DateTime(timezone=True),
