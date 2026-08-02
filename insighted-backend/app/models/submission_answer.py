@@ -3,7 +3,8 @@ from sqlalchemy import (
     Integer,
     String,
     ForeignKey,
-    Text
+    Text,
+    DateTime
 )
 
 from sqlalchemy.orm import relationship
@@ -46,6 +47,16 @@ class SubmissionAnswer(Base):
         Integer,
         nullable=True
     )
+    
+    feedback = Column(
+      String,
+      nullable=True
+    )
+
+    evaluated_at = Column(
+      DateTime(timezone=True),
+      nullable=True
+    ) 
 
     submission = relationship(
         "Submission",

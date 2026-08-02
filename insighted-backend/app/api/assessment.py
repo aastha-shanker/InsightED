@@ -14,7 +14,9 @@ from app.schemas.assessment_schema import (
 )
 
 from app.services.assessment_service import (
-    create_assessment
+    create_assessment,
+    get_all_assessments,
+    get_assessment_by_id
 )
 
 router = APIRouter(
@@ -48,5 +50,45 @@ def create_assessment_endpoint(
     except ValueError as e:
         raise HTTPException(
             status_code=400,
+            detail=str(e)
+        )
+        
+@router.get(
+    "/",
+    response_model=list[AssessmentResponse]
+)
+def get_all_assessments_endpoint(
+    db: Session = Depends(get_db)
+):
+
+    assessments = get_all_assessments(
+        db=db
+    )
+
+    return assessments
+
+
+@router.get(
+    "/{assessment_id}",
+    response_model=AssessmentResponse
+)
+def get_assessment_by_id_endpoint(
+    assessment_id: int,
+    db: Session = Depends(get_db)
+):
+
+    try:
+
+        assessment = get_assessment_by_id(
+            db=db,
+            assessment_id=assessment_id
+        )
+
+        return assessment
+
+    except ValueError as e:
+
+        raise HTTPException(
+            status_code=404,
             detail=str(e)
         )

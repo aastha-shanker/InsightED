@@ -1,4 +1,5 @@
 from pydantic import BaseModel
+from datetime import datetime
 
 
 class SubmissionAnswerCreate(BaseModel):
@@ -15,6 +16,9 @@ class SubmissionAnswerResponse(BaseModel):
     answer_text: str | None
     file_url: str | None
     marks_obtained: int | None
+    feedback: str | None
+    evaluated_at: datetime | None
+    
 
     class Config:
         from_attributes = True

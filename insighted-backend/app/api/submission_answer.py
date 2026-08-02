@@ -14,7 +14,8 @@ from app.schemas.submission_answer_schema import (
 )
 
 from app.services.submission_answer_service import (
-    create_submission_answer
+    create_submission_answer,
+    get_answers_by_submission
 )
 
 router = APIRouter(
@@ -46,5 +47,30 @@ def create_submission_answer_endpoint(
     except ValueError as e:
         raise HTTPException(
             status_code=400,
+            detail=str(e)
+        )
+        
+@router.get(
+    "/submission/{submission_id}",
+    response_model=list[SubmissionAnswerResponse]
+)
+def get_answers_by_submission_endpoint(
+    submission_id: int,
+    db: Session = Depends(get_db)
+):
+
+    try:
+
+        answers = get_answers_by_submission(
+            db=db,
+            submission_id=submission_id
+        )
+
+        return answers
+
+    except ValueError as e:
+
+        raise HTTPException(
+            status_code=404,
             detail=str(e)
         )

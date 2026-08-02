@@ -14,7 +14,8 @@ from app.schemas.question_schema import (
 )
 
 from app.services.question_service import (
-    create_question
+    create_question,
+    get_questions_by_assessment
 )
 
 router = APIRouter(
@@ -52,5 +53,30 @@ def create_question_endpoint(
     except ValueError as e:
         raise HTTPException(
             status_code=400,
+            detail=str(e)
+        )
+        
+@router.get(
+    "/assessment/{assessment_id}",
+    response_model=list[QuestionResponse]
+)
+def get_questions_by_assessment_endpoint(
+    assessment_id: int,
+    db: Session = Depends(get_db)
+):
+
+    try:
+
+        questions = get_questions_by_assessment(
+            db=db,
+            assessment_id=assessment_id
+        )
+
+        return questions
+
+    except ValueError as e:
+
+        raise HTTPException(
+            status_code=404,
             detail=str(e)
         )

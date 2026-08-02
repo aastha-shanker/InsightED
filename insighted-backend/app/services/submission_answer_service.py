@@ -1,3 +1,5 @@
+import datetime
+
 from sqlalchemy.orm import Session
 
 from app.models.submission_answer import SubmissionAnswer
@@ -10,7 +12,8 @@ def create_submission_answer(
     submission_id: int,
     question_id: int,
     answer_text: str | None,
-    file_url: str | None
+    file_url: str | None,
+    
 ):
 
     submission = (
@@ -57,7 +60,8 @@ def create_submission_answer(
         submission_id=submission_id,
         question_id=question_id,
         answer_text=answer_text,
-        file_url=file_url
+        file_url=file_url,
+        
     )
 
     db.add(submission_answer)
@@ -65,3 +69,31 @@ def create_submission_answer(
     db.refresh(submission_answer)
 
     return submission_answer
+
+def get_answers_by_submission(
+    db: Session,
+    submission_id: int
+):
+
+    submission = (
+        db.query(Submission)
+        .filter(
+            Submission.id == submission_id
+        )
+        .first()
+    )
+
+    if not submission:
+        raise ValueError(
+            "Submission not found"
+        )
+
+    answers = (
+        db.query(SubmissionAnswer)
+        .filter(
+            SubmissionAnswer.submission_id == submission_id
+        )
+        .all()
+    )
+
+    return answers

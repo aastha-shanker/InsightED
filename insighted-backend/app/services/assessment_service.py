@@ -41,3 +41,35 @@ def create_assessment(
     db.refresh(assessment)
 
     return assessment
+
+def get_all_assessments(
+    db: Session
+):
+
+    assessments = (
+        db.query(Assessment)
+        .all()
+    )
+
+    return assessments
+
+
+def get_assessment_by_id(
+    db: Session,
+    assessment_id: int
+):
+
+    assessment = (
+        db.query(Assessment)
+        .filter(
+            Assessment.id == assessment_id
+        )
+        .first()
+    )
+
+    if not assessment:
+        raise ValueError(
+            "Assessment not found"
+        )
+
+    return assessment

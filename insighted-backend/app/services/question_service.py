@@ -31,15 +31,15 @@ def create_question(
         )
 
     question = Question(
-    assessment_id=assessment_id,
-    question_text=question_text,
-    question_type=question_type,
-    marks=marks,
-    option_a=option_a,
-    option_b=option_b,
-    option_c=option_c,
-    option_d=option_d,
-    correct_answer=correct_answer
+        assessment_id=assessment_id,
+        question_text=question_text,
+        question_type=question_type,
+        marks=marks,
+        option_a=option_a,
+        option_b=option_b,
+        option_c=option_c,
+        option_d=option_d,
+        correct_answer=correct_answer
     )
 
     db.add(question)
@@ -47,3 +47,32 @@ def create_question(
     db.refresh(question)
 
     return question
+
+
+def get_questions_by_assessment(
+    db: Session,
+    assessment_id: int
+):
+
+    assessment = (
+        db.query(Assessment)
+        .filter(
+            Assessment.id == assessment_id
+        )
+        .first()
+    )
+
+    if not assessment:
+        raise ValueError(
+            "Assessment not found"
+        )
+
+    questions = (
+        db.query(Question)
+        .filter(
+            Question.assessment_id == assessment_id
+        )
+        .all()
+    )
+
+    return questions
