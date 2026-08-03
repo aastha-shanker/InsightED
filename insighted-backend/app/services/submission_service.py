@@ -61,3 +61,81 @@ def create_submission(
     db.refresh(submission)
 
     return submission
+
+def get_submission_by_id(
+    db: Session,
+    submission_id: int
+):
+
+    submission = (
+        db.query(Submission)
+        .filter(
+            Submission.id == submission_id
+        )
+        .first()
+    )
+
+    if not submission:
+        raise ValueError(
+            "Submission not found"
+        )
+
+    return submission
+
+
+def get_submissions_by_student(
+    db: Session,
+    student_id: int
+):
+
+    student = (
+        db.query(Student)
+        .filter(
+            Student.id == student_id
+        )
+        .first()
+    )
+
+    if not student:
+        raise ValueError(
+            "Student not found"
+        )
+
+    submissions = (
+        db.query(Submission)
+        .filter(
+            Submission.student_id == student_id
+        )
+        .all()
+    )
+
+    return submissions
+
+
+def get_submissions_by_assessment(
+    db: Session,
+    assessment_id: int
+):
+
+    assessment = (
+        db.query(Assessment)
+        .filter(
+            Assessment.id == assessment_id
+        )
+        .first()
+    )
+
+    if not assessment:
+        raise ValueError(
+            "Assessment not found"
+        )
+
+    submissions = (
+        db.query(Submission)
+        .filter(
+            Submission.assessment_id == assessment_id
+        )
+        .all()
+    )
+
+    return submissions
