@@ -36,3 +36,19 @@ class ClassroomDetailResponse(BaseModel):
     teacher_id: int
     total_students: int
     total_assessments: int
+    
+class ClassroomStudentResponse(BaseModel):
+    id: int
+    name: str
+    email: str
+
+
+class ClassroomStudentsResponse(BaseModel):
+    students: list[ClassroomStudentResponse]
+
+class AssessmentResponse(BaseModel):
+    id: int
+    title: str
+
+    class Config:
+        from_attributes = True

@@ -221,3 +221,81 @@ def get_classroom_details(
         "total_students": total_students,
         "total_assessments": total_assessments
     }
+    
+def get_classroom_students(
+    db: Session,
+    classroom_id: int
+):
+
+    classroom = (
+        db.query(Classroom)
+        .filter(
+            Classroom.id == classroom_id
+        )
+        .first()
+    )
+
+    if not classroom:
+        raise ValueError(
+            "Classroom not found"
+        )
+
+    classroom_students = (
+        db.query(ClassroomStudent)
+        .filter(
+            ClassroomStudent.classroom_id == classroom_id
+        )
+        .all()
+    )
+
+    students = []
+
+    for classroom_student in classroom_students:
+
+        student = (
+            db.query(Student)
+            .filter(
+                Student.id == classroom_student.student_id
+            )
+            .first()
+        )
+
+        if student:
+
+            students.append(
+                {
+                    "id": student.id,
+                    "name": student.user.name,
+                    "email": student.user.email
+                }
+            )
+
+    return students
+
+def get_classroom_assessments(
+    db: Session,
+    classroom_id: int
+):
+
+    classroom = (
+        db.query(Classroom)
+        .filter(
+            Classroom.id == classroom_id
+        )
+        .first()
+    )
+
+    if not classroom:
+        raise ValueError(
+            "Classroom not found"
+        )
+
+    assessments = (
+        db.query(Assessment)
+        .filter(
+            Assessment.classroom_id == classroom_id
+        )
+        .all()
+    )
+
+    return assessments

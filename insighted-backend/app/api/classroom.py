@@ -13,14 +13,18 @@ from app.schemas.classroom_schema import (
     ClassroomResponse,
     JoinClassroomRequest,
     ClassroomListResponse,
-    ClassroomDetailResponse
+    ClassroomDetailResponse,
+    ClassroomStudentsResponse,
+    AssessmentResponse
 )
 
 from app.services.classroom_service import (
     create_classroom,
     join_classroom,
     get_student_classrooms,
-    get_classroom_details
+    get_classroom_details,
+    get_classroom_students,
+    get_classroom_assessments
 )
 
 router = APIRouter(
@@ -115,6 +119,58 @@ def get_classroom_details_endpoint(
         )
 
         return classroom
+
+    except ValueError as e:
+
+        raise HTTPException(
+            status_code=404,
+            detail=str(e)
+        )
+        
+@router.get(
+    "/{classroom_id}/students",
+    response_model=ClassroomStudentsResponse
+)
+def get_classroom_students_endpoint(
+    classroom_id: int,
+    db: Session = Depends(get_db)
+):
+
+    try:
+
+        students = get_classroom_students(
+            db=db,
+            classroom_id=classroom_id
+        )
+
+        return {
+            "students": students
+        }
+
+    except ValueError as e:
+
+        raise HTTPException(
+            status_code=404,
+            detail=str(e)
+        )
+        
+@router.get(
+    "/{classroom_id}/assessments",
+    response_model=list[AssessmentResponse]
+)
+def get_classroom_assessments_endpoint(
+    classroom_id: int,
+    db: Session = Depends(get_db)
+):
+
+    try:
+
+        assessments = get_classroom_assessments(
+            db=db,
+            classroom_id=classroom_id
+        )
+
+        return assessments
 
     except ValueError as e:
 
