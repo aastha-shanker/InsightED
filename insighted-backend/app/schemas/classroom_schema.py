@@ -28,3 +28,11 @@ class ClassroomListResponse(BaseModel):
 
     class Config:
         from_attributes = True
+        
+class ClassroomDetailResponse(BaseModel):
+    id: int
+    name: str
+    join_code: str
+    teacher_id: int
+    total_students: int
+    total_assessments: int

@@ -8,6 +8,7 @@ from app.models.classroom_student import ClassroomStudent
 from app.models.teacher import Teacher
 from app.models.student import Student
 from app.models.organization import Organization
+from app.models.assessment import Assessment
 
 
 def generate_join_code(length=6):
@@ -177,3 +178,46 @@ def get_student_classrooms(
     )
 
     return classrooms
+
+def get_classroom_details(
+    db: Session,
+    classroom_id: int
+):
+
+    classroom = (
+        db.query(Classroom)
+        .filter(
+            Classroom.id == classroom_id
+        )
+        .first()
+    )
+
+    if not classroom:
+        raise ValueError(
+            "Classroom not found"
+        )
+
+    total_students = (
+        db.query(ClassroomStudent)
+        .filter(
+            ClassroomStudent.classroom_id == classroom_id
+        )
+        .count()
+    )
+
+    total_assessments = (
+        db.query(Assessment)
+        .filter(
+            Assessment.classroom_id == classroom_id
+        )
+        .count()
+    )
+
+    return {
+        "id": classroom.id,
+        "name": classroom.name,
+        "join_code": classroom.join_code,
+        "teacher_id": classroom.teacher_id,
+        "total_students": total_students,
+        "total_assessments": total_assessments
+    }
