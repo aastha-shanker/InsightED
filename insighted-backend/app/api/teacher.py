@@ -17,6 +17,10 @@ from app.services.teacher_service import (
     create_teacher
 )
 
+from app.dependencies.roles import (
+    get_current_organization_admin
+)
+
 router = APIRouter(
     prefix="/teachers",
     tags=["Teachers"]
@@ -29,7 +33,10 @@ router = APIRouter(
 )
 def create_teacher_endpoint(
     request: TeacherCreate,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    current_user = Depends(
+        get_current_organization_admin
+    )
 ):
     try:
         teacher = create_teacher(
