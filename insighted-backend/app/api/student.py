@@ -11,6 +11,9 @@ from app.schemas.student_schema import (
 from app.services.student_service import (
     create_student
 )
+from app.dependencies.roles import (
+    get_current_organization_admin
+)
 
 router = APIRouter(
     prefix="/students",
@@ -24,7 +27,10 @@ router = APIRouter(
 )
 def create_student_endpoint(
     request: StudentCreate,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    current_user = Depends(
+        get_current_organization_admin
+    )
 ):
     try:
         student = create_student(
