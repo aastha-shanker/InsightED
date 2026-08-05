@@ -11,6 +11,10 @@ from app.schemas.organization_schema import (
 from app.services.organization_service import (
     create_organization
 )
+from app.dependencies.roles import (
+    get_current_super_admin
+)
+
 router = APIRouter(
     prefix="/organizations",
     tags=["Organizations"]
@@ -21,7 +25,10 @@ router = APIRouter(
 )
 def create_org(
     request: OrganizationCreate,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    current_user = Depends(
+        get_current_super_admin
+    )
 ):
     try:
         return create_organization(
@@ -36,4 +43,3 @@ def create_org(
             status_code=400,
             detail=str(e)
         )
-        

@@ -32,3 +32,33 @@ def get_current_organization_admin(
         )
 
     return current_user
+def get_current_teacher(
+    current_user=Depends(
+        get_current_user
+    )
+):
+    if current_user.role not in [
+        "teacher",
+        "organization_admin",
+        "super_admin"
+    ]:
+        raise HTTPException(
+            status_code=403,
+            detail="Teacher access required"
+        )
+
+    return current_user
+
+
+def get_current_student(
+    current_user=Depends(
+        get_current_user
+    )
+):
+    if current_user.role != "student":
+        raise HTTPException(
+            status_code=403,
+            detail="Student access required"
+        )
+
+    return current_user
