@@ -26,7 +26,9 @@ from app.services.classroom_service import (
     get_classroom_students,
     get_classroom_assessments
 )
-
+from app.dependencies.roles import (
+    get_current_teacher
+)
 router = APIRouter(
     prefix="/classrooms",
     tags=["Classrooms"]
@@ -38,7 +40,10 @@ router = APIRouter(
 )
 def create_classroom_endpoint(
     request: ClassroomCreate,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    current_user = Depends(
+        get_current_teacher
+    )
 ):
 
     try:
