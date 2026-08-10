@@ -18,6 +18,9 @@ from app.services.assessment_service import (
     get_all_assessments,
     get_assessment_by_id
 )
+from app.dependencies.roles import (
+    get_current_teacher
+)
 
 router = APIRouter(
     prefix="/assessments",
@@ -31,7 +34,10 @@ router = APIRouter(
 )
 def create_assessment_endpoint(
     request: AssessmentCreate,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    current_user = Depends(
+        get_current_teacher
+    )
 ):
 
     try:
