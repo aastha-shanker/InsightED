@@ -15,6 +15,9 @@ from app.services.evaluation_service import (
 from app.schemas.submission_schema import (
     SubmissionResponse
 )
+from app.dependencies.roles import (
+    get_current_teacher
+)
 
 router = APIRouter(
     prefix="/evaluations",
@@ -28,7 +31,11 @@ router = APIRouter(
 )
 def evaluate_submission_endpoint(
     submission_id: int,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    current_user = Depends(
+    get_current_teacher
+)
+    
 ):
 
     try:

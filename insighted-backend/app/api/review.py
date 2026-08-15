@@ -21,6 +21,10 @@ from app.services.review_service import (
     review_submission_answer
 )
 
+from app.dependencies.roles import (
+    get_current_teacher
+)
+
 router = APIRouter(
     prefix="/reviews",
     tags=["Reviews"]
@@ -34,7 +38,10 @@ router = APIRouter(
 def review_submission_answer_endpoint(
     submission_answer_id: int,
     request: ReviewCreate,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    current_user = Depends(
+        get_current_teacher
+    )
 ):
 
     try:

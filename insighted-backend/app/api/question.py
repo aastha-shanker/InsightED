@@ -17,6 +17,9 @@ from app.services.question_service import (
     create_question,
     get_questions_by_assessment
 )
+from app.dependencies.roles import (
+    get_current_teacher
+)
 
 router = APIRouter(
     prefix="/questions",
@@ -30,7 +33,10 @@ router = APIRouter(
 )
 def create_question_endpoint(
     request: QuestionCreate,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    current_user = Depends(
+        get_current_teacher
+    )
 ):
 
     try:
