@@ -9,14 +9,6 @@ from sqlalchemy.orm import Session
 from app.database.session import get_db
 
 from app.schemas.dashboard_schema import (
-    TeacherDashboardResponse
-)
-
-from app.services.dashboard_service import (
-    get_teacher_dashboard
-)
-
-from app.schemas.dashboard_schema import (
     TeacherDashboardResponse,
     StudentDashboardResponse
 )
@@ -25,6 +17,13 @@ from app.services.dashboard_service import (
     get_teacher_dashboard,
     get_student_dashboard
 )
+from app.dependencies.roles import (
+    get_current_teacher_record,
+    get_current_student_record
+)
+
+from app.models.teacher import Teacher
+from app.models.student import Student
 
 router = APIRouter(
     prefix="/dashboard",
@@ -38,8 +37,16 @@ router = APIRouter(
 )
 def get_teacher_dashboard_endpoint(
     teacher_id: int,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    current_teacher: Teacher = Depends(
+        get_current_teacher_record
+    )
 ):
+    if current_teacher.id != teacher_id:
+        raise HTTPException(
+            status_code=403,
+            detail="Access denied"
+        )
 
     try:
 
@@ -63,9 +70,16 @@ def get_teacher_dashboard_endpoint(
 )
 def get_student_dashboard_endpoint(
     student_id: int,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    current_student: Student = Depends(
+        get_current_student_record
+    )
 ):
-
+    if current_student.id != student_id:
+        raise HTTPException(
+            status_code=403,
+            detail="Access denied"
+        )
     try:
 
         dashboard = get_student_dashboard(

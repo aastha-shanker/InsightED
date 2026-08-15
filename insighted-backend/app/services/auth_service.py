@@ -57,5 +57,12 @@ def login_user(
 
     if not valid:
         return None
+    print(
+    "LOGIN RETURNING:",
+    user.id,
+    user.name,
+    user.email,
+    user.role
+    )
 
     return user
