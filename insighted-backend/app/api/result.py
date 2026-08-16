@@ -17,6 +17,12 @@ from app.services.result_service import (
     get_results_by_student
 )
 
+from app.dependencies.roles import (
+    get_current_student_record
+)
+
+from app.models.student import Student
+
 router = APIRouter(
     prefix="/results",
     tags=["Results"]
@@ -28,14 +34,18 @@ router = APIRouter(
 )
 def get_result_by_submission_endpoint(
     submission_id: int,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    current_student: Student = Depends(
+        get_current_student_record
+    )
 ):
 
     try:
 
         result = get_result_by_submission(
             db=db,
-            submission_id=submission_id
+            submission_id=submission_id,
+            current_student_id=current_student.id
         )
 
         return result
@@ -48,19 +58,21 @@ def get_result_by_submission_endpoint(
         )
         
 @router.get(
-    "/student/{student_id}",
+    "/my",
     response_model=list[ResultResponse]
 )
-def get_results_by_student_endpoint(
-    student_id: int,
-    db: Session = Depends(get_db)
+def get_my_results_endpoint(
+    db: Session = Depends(get_db),
+    current_student: Student = Depends(
+        get_current_student_record
+    )
 ):
 
     try:
 
         results = get_results_by_student(
             db=db,
-            student_id=student_id
+            student_id=current_student.id
         )
 
         return results

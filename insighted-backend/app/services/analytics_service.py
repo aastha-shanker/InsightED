@@ -6,7 +6,8 @@ from app.models.submission import Submission
 
 def get_assessment_analytics(
     db: Session,
-    assessment_id: int
+    assessment_id: int,
+    current_teacher_id: int
 ):
 
     assessment = (
@@ -20,6 +21,11 @@ def get_assessment_analytics(
     if not assessment:
         raise ValueError(
             "Assessment not found"
+        )
+    
+    if assessment.classroom.teacher_id != current_teacher_id:
+        raise ValueError(
+            "Access denied"
         )
 
     submissions = (

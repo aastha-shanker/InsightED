@@ -5,7 +5,8 @@ from app.models.student import Student
 
 def get_result_by_submission(
     db: Session,
-    submission_id: int
+    submission_id: int,
+    current_student_id: int
 ):
 
     submission = (
@@ -20,6 +21,11 @@ def get_result_by_submission(
         raise ValueError(
             "Submission not found"
         )
+        
+    if submission.student_id != current_student_id:
+        raise ValueError(
+            "Access denied"
+    )
 
     return submission
   
@@ -40,6 +46,8 @@ def get_results_by_student(
         raise ValueError(
             "Student not found"
         )
+        
+    
 
     submissions = (
         db.query(Submission)
