@@ -17,9 +17,12 @@ from app.services.question_service import (
     create_question,
     get_questions_by_assessment
 )
+
 from app.dependencies.roles import (
-    get_current_teacher
+    get_current_teacher_record
 )
+
+from app.models.teacher import Teacher
 
 router = APIRouter(
     prefix="/questions",
@@ -34,14 +37,16 @@ router = APIRouter(
 def create_question_endpoint(
     request: QuestionCreate,
     db: Session = Depends(get_db),
-    current_user = Depends(
-        get_current_teacher
+    current_teacher: Teacher = Depends(
+        get_current_teacher_record
     )
 ):
 
     try:
+
         question = create_question(
             db=db,
+            teacher_id=current_teacher.id,
             assessment_id=request.assessment_id,
             question_text=request.question_text,
             question_type=request.question_type,
@@ -52,16 +57,17 @@ def create_question_endpoint(
             option_d=request.option_d,
             correct_answer=request.correct_answer
         )
-        
 
         return question
 
     except ValueError as e:
+
         raise HTTPException(
             status_code=400,
             detail=str(e)
         )
-        
+
+
 @router.get(
     "/assessment/{assessment_id}",
     response_model=list[QuestionResponse]

@@ -2,10 +2,12 @@ from sqlalchemy.orm import Session
 
 from app.models.question import Question
 from app.models.assessment import Assessment
+from app.models.classroom import Classroom
 
 
 def create_question(
     db: Session,
+    teacher_id: int,
     assessment_id: int,
     question_text: str,
     question_type: str,
@@ -28,6 +30,24 @@ def create_question(
     if not assessment:
         raise ValueError(
             "Assessment not found"
+        )
+
+    classroom = (
+        db.query(Classroom)
+        .filter(
+            Classroom.id == assessment.classroom_id
+        )
+        .first()
+    )
+
+    if not classroom:
+        raise ValueError(
+            "Classroom not found"
+        )
+
+    if classroom.teacher_id != teacher_id:
+        raise ValueError(
+            "You can only add questions to your own assessments"
         )
 
     question = Question(

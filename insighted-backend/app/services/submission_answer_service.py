@@ -13,7 +13,7 @@ def create_submission_answer(
     question_id: int,
     answer_text: str | None,
     file_url: str | None,
-    
+    current_student_id: int
 ):
 
     submission = (
@@ -28,6 +28,11 @@ def create_submission_answer(
         raise ValueError(
             "Submission not found"
         )
+        
+    if submission.student_id != current_student_id:
+        raise ValueError(
+            "You can only answer your own submissions"
+    )
 
     question = (
         db.query(Question)
@@ -72,7 +77,8 @@ def create_submission_answer(
 
 def get_answers_by_submission(
     db: Session,
-    submission_id: int
+    submission_id: int,
+    current_student_id: int
 ):
 
     submission = (
@@ -87,6 +93,10 @@ def get_answers_by_submission(
         raise ValueError(
             "Submission not found"
         )
+    if submission.student_id != current_student_id:
+        raise ValueError(
+            "Access denied"
+    )
 
     answers = (
         db.query(SubmissionAnswer)

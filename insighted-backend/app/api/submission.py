@@ -20,6 +20,14 @@ from app.services.submission_service import (
     get_submissions_by_assessment
 )
 
+from app.dependencies.roles import (
+    get_current_student_record,
+    get_current_teacher_record
+)
+
+from app.models.student import Student
+from app.models.teacher import Teacher
+
 router = APIRouter(
     prefix="/submissions",
     tags=["Submissions"]
@@ -32,24 +40,58 @@ router = APIRouter(
 )
 def create_submission_endpoint(
     request: SubmissionCreate,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    current_student: Student = Depends(
+        get_current_student_record
+    )
 ):
 
     try:
+
         submission = create_submission(
             db=db,
             assessment_id=request.assessment_id,
-            student_id=request.student_id
+            student_id=current_student.id
         )
 
         return submission
 
     except ValueError as e:
+
         raise HTTPException(
             status_code=400,
             detail=str(e)
         )
-        
+
+@router.get(
+    "/my",
+    response_model=list[SubmissionResponse]
+)
+def get_my_submissions_endpoint(
+    db: Session = Depends(get_db),
+    current_student: Student = Depends(
+        get_current_student_record
+    )
+):
+
+    try:
+
+        submissions = get_submissions_by_student(
+            db=db,
+            student_id=current_student.id
+        )
+
+        return submissions
+
+    except ValueError as e:
+
+        raise HTTPException(
+            status_code=404,
+            detail=str(e)
+        )
+
+
+
 @router.get(
     "/{submission_id}",
     response_model=SubmissionResponse
@@ -75,38 +117,18 @@ def get_submission_by_id_endpoint(
             detail=str(e)
         )
 
-@router.get(
-    "/student/{student_id}",
-    response_model=list[SubmissionResponse]
-)
-def get_submissions_by_student_endpoint(
-    student_id: int,
-    db: Session = Depends(get_db)
-):
 
-    try:
 
-        submissions = get_submissions_by_student(
-            db=db,
-            student_id=student_id
-        )
-
-        return submissions
-
-    except ValueError as e:
-
-        raise HTTPException(
-            status_code=404,
-            detail=str(e)
-        )
-        
 @router.get(
     "/assessment/{assessment_id}",
     response_model=list[SubmissionResponse]
 )
 def get_submissions_by_assessment_endpoint(
     assessment_id: int,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    current_teacher: Teacher = Depends(
+        get_current_teacher_record
+    )
 ):
 
     try:
