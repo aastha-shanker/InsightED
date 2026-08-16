@@ -75,4 +75,4 @@ def get_organization_dashboard(
         "total_students": total_students,
         "total_classrooms": total_classrooms,
         "total_assessments": total_assessments
-    }
+    }  
