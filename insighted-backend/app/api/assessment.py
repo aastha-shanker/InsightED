@@ -15,12 +15,14 @@ from app.schemas.assessment_schema import (
 
 from app.services.assessment_service import (
     create_assessment,
-    get_all_assessments,
     get_assessment_by_id
 )
+
 from app.dependencies.roles import (
-    get_current_teacher
+    get_current_teacher_record
 )
+
+from app.models.teacher import Teacher
 
 router = APIRouter(
     prefix="/assessments",
@@ -35,15 +37,17 @@ router = APIRouter(
 def create_assessment_endpoint(
     request: AssessmentCreate,
     db: Session = Depends(get_db),
-    current_user = Depends(
-        get_current_teacher
+    current_teacher: Teacher = Depends(
+        get_current_teacher_record
     )
 ):
 
     try:
+
         assessment = create_assessment(
             db=db,
             classroom_id=request.classroom_id,
+            teacher_id=current_teacher.id,
             title=request.title,
             description=request.description,
             assessment_type=request.assessment_type,
@@ -54,24 +58,11 @@ def create_assessment_endpoint(
         return assessment
 
     except ValueError as e:
+
         raise HTTPException(
             status_code=400,
             detail=str(e)
         )
-        
-@router.get(
-    "/",
-    response_model=list[AssessmentResponse]
-)
-def get_all_assessments_endpoint(
-    db: Session = Depends(get_db)
-):
-
-    assessments = get_all_assessments(
-        db=db
-    )
-
-    return assessments
 
 
 @router.get(
@@ -80,14 +71,18 @@ def get_all_assessments_endpoint(
 )
 def get_assessment_by_id_endpoint(
     assessment_id: int,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    current_teacher: Teacher = Depends(
+        get_current_teacher_record
+    )
 ):
 
     try:
 
         assessment = get_assessment_by_id(
             db=db,
-            assessment_id=assessment_id
+            assessment_id=assessment_id,
+            teacher_id=current_teacher.id
         )
 
         return assessment

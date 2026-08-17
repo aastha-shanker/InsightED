@@ -7,6 +7,7 @@ from app.models.classroom import Classroom
 def create_assessment(
     db: Session,
     classroom_id: int,
+    teacher_id: int,
     title: str,
     description: str,
     assessment_type: str,
@@ -27,6 +28,11 @@ def create_assessment(
             "Classroom not found"
         )
 
+    if classroom.teacher_id != teacher_id:
+        raise ValueError(
+            "You do not own this classroom"
+        )
+
     assessment = Assessment(
         classroom_id=classroom_id,
         title=title,
@@ -42,21 +48,11 @@ def create_assessment(
 
     return assessment
 
-def get_all_assessments(
-    db: Session
-):
-
-    assessments = (
-        db.query(Assessment)
-        .all()
-    )
-
-    return assessments
-
 
 def get_assessment_by_id(
     db: Session,
-    assessment_id: int
+    assessment_id: int,
+    teacher_id: int
 ):
 
     assessment = (
@@ -70,6 +66,19 @@ def get_assessment_by_id(
     if not assessment:
         raise ValueError(
             "Assessment not found"
+        )
+
+    classroom = (
+        db.query(Classroom)
+        .filter(
+            Classroom.id == assessment.classroom_id
+        )
+        .first()
+    )
+
+    if classroom.teacher_id != teacher_id:
+        raise ValueError(
+            "Access denied"
         )
 
     return assessment
